@@ -1,0 +1,28 @@
+[project]
+name = "app"
+version = "1.0.0"
+description = "Api to reun poker related calculations"
+authors = [
+    {name = "Leopoldo",email = "nicoromerom87@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi (>=0.115.7,<0.116.0)",
+    "pydantic[email] (>=2.10.6,<3.0.0)",
+    "uvicorn (>=0.34.0,<0.35.0)",
+    "dotenv (>=0.9.9,<0.10.0)",
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+treys = "^0.1.8"
+httpx = "^0.28.1"
+pytest-asyncio = "^0.25.3"
+ruff = "^0.9.7"
+pre-commit = "^4.1.0"
