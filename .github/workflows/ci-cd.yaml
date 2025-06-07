@@ -1,4 +1,4 @@
-name: Deploy Images to GHCRAdd commentMore actions
+name: Deploy Images to GHCR
 
 permissions:
   packages: write
@@ -10,34 +10,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Extract version from pyproject.toml
-        id: version
-        run: echo "VERSION=$(sed -n 's/^version = \"\([^"]*\)\"/\1/p' pyproject.toml)" >> .env
-
-      - name: Create Tag
-        run: |
-          TAG=${ENVIRONMENT}-$(sed -n 's/^version = \"\([^"]*\)\"/\1/p' pyproject.toml)-${GITHUB_SHA}
-          echo "TAG=$TAG" >> .env
-
-      - name: Export variables to env-file
-        run: cp .env env-file
-
-      - name: Export version and tag
-        run: cat env-file
-
-      - name: Upload environment file
-        uses: actions/upload-artifact@v4
-        with:
-          name: env-file
-          path: env-file
-          if-no-files-found: error
-
   docker-build-and-deploy:
     runs-on: ubuntu-latest
 
@@ -52,28 +24,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download environment file
-        uses: actions/download-artifact@v4
-        with:
-          name: env-file
-          path: .
-
-      - name: Recreate .env from env-file
-        run: mv env-file .env
-
-      - name: Load environment variables
-        run: |
-          source .env
-          echo "TAG=$TAG" >> $GITHUB_ENV
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-      
       - name: 'Build and Push Docker Image'
         run: |
           docker build . \
             --tag ghcr.io/${{ github.repository_owner }}/poker-calculator:latest
           docker push ghcr.io/${{ github.repository_owner }}/poker-calculator:latest
 
-      - name: 'Deploy'
+      - name: 'Deploy to instance'
         run: |
           eval $(ssh-agent -s)
           echo "${{ secrets.DEPLOY_KEY }}" | ssh-add -
