@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
-from app.equity.infrastructure.routes.post_calculate_equity.calculate_equity_request import CalculateEquityRequest
-from app.equity.infrastructure.routes.post_calculate_equity.calculate_equity_response import CalculateEquityResponse
+from app.equity.infrastructure.routes.v1.hand_vs_hand.calculate_hand_vs_hand_request import CalculateHandVsHandEquityRequest
+from app.equity.infrastructure.routes.v1.calculate_equity_response import CalculateEquityResponse
 from app.equity.domain.equity_calculator import EquityCalculator
 import time
 from app.di_container import get_dependency
@@ -9,25 +9,25 @@ from app.di_container import get_dependency
 router = APIRouter(prefix="/v1", tags=["calculate"])
 
 
-@router.post("/calculate/equity", response_model=CalculateEquityResponse)
+@router.post("/calculate/equity/hand-vs-hand", response_model=CalculateEquityResponse)
 async def run(
-    request: CalculateEquityRequest,
+    request: CalculateHandVsHandEquityRequest,
     calculator: EquityCalculator = Depends(
-        lambda: get_dependency("hand_vs_range_equity_calculator")
+        lambda: get_dependency("hand_vs_hand_equity_calculator")
     ),
 ):
     try:
         start = time.time()
 
-        hand_equity, range_equity, tie_equity = calculator.execute(
-            request.hand, request.range, request.board
+        hero_equity, villain_equity, tie_equity = calculator.execute(
+            request.hero_hand, request.villain_hand, request.board
         )
         print(f"Calculation done in {time.time() - start:.2f}s")
 
         return JSONResponse(
             {
-                "hand_equity": hand_equity,
-                "range_equity": range_equity,
+                "hero_equity": hero_equity,
+                "villain_equity": villain_equity,
                 "tie_equity": tie_equity,
             }
         )
