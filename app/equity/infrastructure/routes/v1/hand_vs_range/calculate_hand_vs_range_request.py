@@ -14,7 +14,7 @@ class CalculateHandVsRangeEquityRequest(BaseModel):
     
     @field_validator('villain_range')
     def validate_range(cls, v):
-        if not all(len(card) == 2 and len(card) <= 3 for card in v):
+        if not all(len(card) >= 2 and len(card) <= 3 for card in v):
             raise ValueError("All range items must be between 2 or 3 characters long, example (KK+, AKo, JJ)")
         return v
-    # >=
+    
