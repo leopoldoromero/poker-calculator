@@ -1,11 +1,17 @@
 from app.equity.infrastructure.hands_from_range_generator import HandsFromRangeGenerator
 from app.equity.infrastructure.hand_vs_range_calculator import HandVsRangeEquityCalculator
+from app.equity.infrastructure.hand_vs_hand_calculator import HandVsHandEquityCalculator
+from app.equity.infrastructure.range_vs_range_calculator import RangeVsRangeEquityCalculator
 
 range_generator = HandsFromRangeGenerator()
-equity_calculator = HandVsRangeEquityCalculator(range_generator)
+hand_vs_range_equity_calculator = HandVsRangeEquityCalculator(range_generator)
+hand_vs_hand_equity_calculator = HandVsHandEquityCalculator(range_generator)
+range_vs_range_equity_calculator = RangeVsRangeEquityCalculator(range_generator)
 
 d_container = {
-    "equity_calculator": equity_calculator,
+    "hand_vs_range_equity_calculator": hand_vs_range_equity_calculator,
+    "hand_vs_hand_equity_calculator": hand_vs_hand_equity_calculator,
+    "range_vs_range_equity_calculator": range_vs_range_equity_calculator,
 }
 
 
